@@ -19,13 +19,13 @@
 #
 # Visit SlackPack at http://sotirov-bg.net/slackpack/
 #
-# $Id: cppcheck.SlackBuild,v 1.1 2017/10/12 13:17:51 gsotirov Exp $
+# $Id: cppcheck.SlackBuild,v 1.2 2017/10/12 14:00:15 gsotirov Exp $
 #
 
 . ../../slack-package.conf
 
 NAME=cppcheck
-VERSION=1.42
+VERSION=1.48
 ARCH=${ARCH:-i486}
 BUILD=${BUILD:-1}
 
@@ -69,7 +69,7 @@ cd gui; qmake
 CFLAGS=$SLKCFLSGS CXXFLAGS=$SLKCFLAGS
 make -j4 || exit 51
 cd ..
-install -m 755 $SRC/gui/gui $PKG/usr/bin/$NAME-gui
+install -m 755 $SRC/gui/$NAME-gui $PKG/usr/bin/$NAME-gui
 
 # Prepare
 bin_perms $PKG
