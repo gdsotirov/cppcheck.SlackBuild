@@ -15,12 +15,12 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #
-# $Id: cppcheck-1.53.diff,v 1.1 2017/10/12 15:59:10 gsotirov Exp $
+# $Id: cppcheck-1.62.diff,v 1.1 2017/10/12 18:36:53 gsotirov Exp $
 #
-diff -urNad cppcheck-1.53-orig//Makefile cppcheck-1.53/Makefile
---- cppcheck-1.53-orig//Makefile	2012-02-11 09:23:45.000000000 +0200
-+++ cppcheck-1.53/Makefile	2017-10-12 18:48:08.243482420 +0300
-@@ -7,6 +7,8 @@
+diff -urNad cppcheck-1.62-orig/Makefile cppcheck-1.62/Makefile
+--- cppcheck-1.62-orig/Makefile	2013-10-12 13:26:38.000000000 +0300
++++ cppcheck-1.62/Makefile	2017-10-12 21:26:55.509265785 +0300
+@@ -55,6 +55,8 @@
  
  ifndef CXXFLAGS
      CXXFLAGS=-O2 -DNDEBUG -Wall
@@ -29,7 +29,7 @@ diff -urNad cppcheck-1.53-orig//Makefile cppcheck-1.53/Makefile
  endif
  
  ifeq ($(HAVE_RULES),yes)
-@@ -39,10 +41,11 @@
+@@ -87,10 +89,11 @@
  endif
  
  BIN=$(DESTDIR)$(PREFIX)/bin
@@ -43,16 +43,16 @@ diff -urNad cppcheck-1.53-orig//Makefile cppcheck-1.53/Makefile
  MAN_SOURCE=man/cppcheck.1.xml
  
  
-@@ -144,7 +147,7 @@
+@@ -202,7 +205,7 @@
  cppcheck: $(LIBOBJ) $(CLIOBJ) $(EXTOBJ)
- 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -o cppcheck $(CLIOBJ) $(LIBOBJ) $(EXTOBJ) $(LIBS)
+ 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o cppcheck $(CLIOBJ) $(LIBOBJ) $(EXTOBJ) $(LIBS) $(LDFLAGS)
  
 -all:	cppcheck testrunner
 +all:	cppcheck testrunner man
  
  testrunner: $(TESTOBJ) $(LIBOBJ) $(EXTOBJ) cli/threadexecutor.o cli/cmdlineparser.o cli/cppcheckexecutor.o cli/filelister.o cli/pathmatch.o
- 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -o testrunner $(TESTOBJ) $(LIBOBJ) cli/threadexecutor.o cli/cppcheckexecutor.o cli/cmdlineparser.o cli/filelister.o cli/pathmatch.o $(EXTOBJ) $(LIBS)
-@@ -170,9 +173,11 @@
+ 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o testrunner $(TESTOBJ) $(LIBOBJ) cli/threadexecutor.o cli/cppcheckexecutor.o cli/cmdlineparser.o cli/filelister.o cli/pathmatch.o $(EXTOBJ) $(LIBS) $(LDFLAGS)
+@@ -231,10 +234,12 @@
  tags:
  	ctags -R --exclude=doxyoutput .
  
@@ -60,6 +60,7 @@ diff -urNad cppcheck-1.53-orig//Makefile cppcheck-1.53/Makefile
 +install: cppcheck man/cppcheck.1
  	install -d ${BIN}
  	install cppcheck ${BIN}
+ 	install htmlreport/cppcheck-htmlreport ${BIN}
 +	install -d ${MAN}/man1
 +	install man/cppcheck.1 ${MAN}/man1/cppcheck.1
  
