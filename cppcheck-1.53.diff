@@ -1,4 +1,4 @@
-# Fix make file to allow CXXFLAGS adjustment and install man page
+# Fix make file to allow CXXFLAGS adjustment, generate and install man page
 # Copyright (C) 2017 Georgi D. Sotirov <gdsotirov@dir.bg>
 #
 # This program is free software; you can redistribute it and/or
@@ -15,21 +15,21 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #
-# $Id: cppcheck-1.48.diff,v 1.1 2017/10/12 14:00:26 gsotirov Exp $
+# $Id: cppcheck-1.53.diff,v 1.1 2017/10/12 15:59:10 gsotirov Exp $
 #
-diff -urNad cppcheck-1.48-orig//Makefile cppcheck-1.48//Makefile
---- cppcheck-1.48-orig//Makefile	2011-04-09 13:41:50.000000000 +0300
-+++ cppcheck-1.48//Makefile	2017-10-12 16:43:02.139685963 +0300
-@@ -2,6 +2,8 @@
+diff -urNad cppcheck-1.53-orig//Makefile cppcheck-1.53/Makefile
+--- cppcheck-1.53-orig//Makefile	2012-02-11 09:23:45.000000000 +0200
++++ cppcheck-1.53/Makefile	2017-10-12 18:48:08.243482420 +0300
+@@ -7,6 +7,8 @@
  
  ifndef CXXFLAGS
-     CXXFLAGS=-O2 -DNDEBUG -DHAVE_RULES -Wall
+     CXXFLAGS=-O2 -DNDEBUG -Wall
 +else
-+    CXXFLAGS+=-O2 -DNDEBUG -DHAVE_RULES -Wall
++    CXXFLAGS+=-O2 -DNDEBUG -Wall
  endif
  
- ifndef CXX
-@@ -25,10 +27,11 @@
+ ifeq ($(HAVE_RULES),yes)
+@@ -39,10 +41,11 @@
  endif
  
  BIN=$(DESTDIR)$(PREFIX)/bin
@@ -43,16 +43,16 @@ diff -urNad cppcheck-1.48-orig//Makefile cppcheck-1.48//Makefile
  MAN_SOURCE=man/cppcheck.1.xml
  
  
-@@ -118,7 +121,7 @@
+@@ -144,7 +147,7 @@
  cppcheck: $(LIBOBJ) $(CLIOBJ) $(EXTOBJ)
- 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o cppcheck $(CLIOBJ) $(LIBOBJ) $(EXTOBJ) -lpcre $(LDFLAGS)
+ 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -o cppcheck $(CLIOBJ) $(LIBOBJ) $(EXTOBJ) $(LIBS)
  
 -all:	cppcheck testrunner
 +all:	cppcheck testrunner man
  
  testrunner: $(TESTOBJ) $(LIBOBJ) $(EXTOBJ) cli/threadexecutor.o cli/cmdlineparser.o cli/cppcheckexecutor.o cli/filelister.o cli/pathmatch.o
- 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o testrunner $(TESTOBJ) $(LIBOBJ) $(EXTOBJ) -lpcre cli/threadexecutor.o cli/cmdlineparser.o cli/filelister.o cli/pathmatch.o $(LDFLAGS)
-@@ -144,9 +147,11 @@
+ 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -o testrunner $(TESTOBJ) $(LIBOBJ) cli/threadexecutor.o cli/cppcheckexecutor.o cli/cmdlineparser.o cli/filelister.o cli/pathmatch.o $(EXTOBJ) $(LIBS)
+@@ -170,9 +173,11 @@
  tags:
  	ctags -R --exclude=doxyoutput .
  
