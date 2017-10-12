@@ -1,0 +1,67 @@
+# Fix make file to allow CXXFLAGS adjustment and install man page
+# Copyright (C) 2017 Georgi D. Sotirov <gdsotirov@dir.bg>
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+#
+# $Id: cppcheck-1.48.diff,v 1.1 2017/10/12 14:00:26 gsotirov Exp $
+#
+diff -urNad cppcheck-1.48-orig//Makefile cppcheck-1.48//Makefile
+--- cppcheck-1.48-orig//Makefile	2011-04-09 13:41:50.000000000 +0300
++++ cppcheck-1.48//Makefile	2017-10-12 16:43:02.139685963 +0300
+@@ -2,6 +2,8 @@
+ 
+ ifndef CXXFLAGS
+     CXXFLAGS=-O2 -DNDEBUG -DHAVE_RULES -Wall
++else
++    CXXFLAGS+=-O2 -DNDEBUG -DHAVE_RULES -Wall
+ endif
+ 
+ ifndef CXX
+@@ -25,10 +27,11 @@
+ endif
+ 
+ BIN=$(DESTDIR)$(PREFIX)/bin
++MAN=$(DESTDIR)$(PREFIX)/man
+ 
+ # For 'make man': sudo apt-get install xsltproc docbook-xsl docbook-xml on Linux
+-DB2MAN=/usr/share/sgml/docbook/stylesheet/xsl/nwalsh/manpages/docbook.xsl
+-XP=xsltproc -''-nonet -''-param man.charmap.use.subset "0"
++DB2MAN=/etc/asciidoc/docbook-xsl/manpage.xsl
++XP=xsltproc -''-nonet -''-param man.charmap.use.subset "0" --output man/
+ MAN_SOURCE=man/cppcheck.1.xml
+ 
+ 
+@@ -118,7 +121,7 @@
+ cppcheck: $(LIBOBJ) $(CLIOBJ) $(EXTOBJ)
+ 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o cppcheck $(CLIOBJ) $(LIBOBJ) $(EXTOBJ) -lpcre $(LDFLAGS)
+ 
+-all:	cppcheck testrunner
++all:	cppcheck testrunner man
+ 
+ testrunner: $(TESTOBJ) $(LIBOBJ) $(EXTOBJ) cli/threadexecutor.o cli/cmdlineparser.o cli/cppcheckexecutor.o cli/filelister.o cli/pathmatch.o
+ 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o testrunner $(TESTOBJ) $(LIBOBJ) $(EXTOBJ) -lpcre cli/threadexecutor.o cli/cmdlineparser.o cli/filelister.o cli/pathmatch.o $(LDFLAGS)
+@@ -144,9 +147,11 @@
+ tags:
+ 	ctags -R --exclude=doxyoutput .
+ 
+-install: cppcheck
++install: cppcheck man/cppcheck.1
+ 	install -d ${BIN}
+ 	install cppcheck ${BIN}
++	install -d ${MAN}/man1
++	install man/cppcheck.1 ${MAN}/man1/cppcheck.1
+ 
+ 
+ ###### Build
