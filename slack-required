@@ -1,4 +1,5 @@
-cxxlibs >= 6.0.17 | gcc-g++ >= 4.7.1
-gcc >= 4.7.1
-glibc-solibs >= 2.15
-pcre >= 8.12
+bs >= 6.0.18 | gcc-g++ >= 4.8.2
+gcc >= 4.8.2
+glibc-solibs >= 2.17
+pcre >= 8.33
+tinyxml2 >= 2.0.2
