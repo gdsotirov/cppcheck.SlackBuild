@@ -19,13 +19,13 @@
 #
 # Visit SlackPack at http://sotirov-bg.net/slackpack/
 #
-# $Id: cppcheck.SlackBuild,v 1.6 2017/10/13 10:35:12 gsotirov Exp $
+# $Id: cppcheck.SlackBuild,v 1.7 2017/10/13 17:18:31 gsotirov Exp $
 #
 
 . ../../slack-package.conf
 
 NAME=cppcheck
-VERSION=1.74
+VERSION=1.80
 ARCH=${ARCH:-i486}
 BUILD=${BUILD:-1}
 
