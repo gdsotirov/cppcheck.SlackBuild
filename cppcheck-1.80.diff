@@ -18,11 +18,11 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #
-# $Id: cppcheck-1.74.diff,v 1.1 2017/10/13 10:36:59 gsotirov Exp $
+# $Id: cppcheck-1.80.diff,v 1.1 2017/10/13 17:13:31 gsotirov Exp $
 #
-diff -urNad cppcheck-1.74-orig/Makefile cppcheck-1.74/Makefile
---- cppcheck-1.74-orig/Makefile	2016-06-05 19:25:34.000000000 +0300
-+++ cppcheck-1.74/Makefile	2017-10-13 10:45:32.003968903 +0300
+diff -urNad cppcheck-1.80-orig/Makefile cppcheck-1.80/Makefile
+--- cppcheck-1.80-orig/Makefile	2017-07-29 14:25:47.000000000 +0300
++++ cppcheck-1.80/Makefile	2017-10-13 14:56:23.896689655 +0300
 @@ -81,6 +81,8 @@
  endif
  ifndef CXXFLAGS
@@ -31,23 +31,23 @@ diff -urNad cppcheck-1.74-orig/Makefile cppcheck-1.74/Makefile
 +    CXXFLAGS+=-std=c++0x -O2 -include lib/cxx11emu.h -DNDEBUG -Wall -Wno-sign-compare
  endif
  
- ifeq ($(CXX), g++)
+ ifeq (g++, $(findstring g++,$(CXX)))
 @@ -107,22 +109,24 @@
  endif
  
  ifndef INCLUDE_FOR_LIB
--    INCLUDE_FOR_LIB=-Ilib -Iexternals/tinyxml
-+    INCLUDE_FOR_LIB=-Ilib
+-    INCLUDE_FOR_LIB=-Ilib -Iexternals/simplecpp -Iexternals/tinyxml
++    INCLUDE_FOR_LIB=-Ilib -Iexternals/simplecpp
  endif
  
  ifndef INCLUDE_FOR_CLI
--    INCLUDE_FOR_CLI=-Ilib -Iexternals/tinyxml
-+    INCLUDE_FOR_CLI=-Ilib
+-    INCLUDE_FOR_CLI=-Ilib -Iexternals/simplecpp -Iexternals/tinyxml
++    INCLUDE_FOR_CLI=-Ilib -Iexternals/simplecpp
  endif
  
  ifndef INCLUDE_FOR_TEST
--    INCLUDE_FOR_TEST=-Ilib -Icli -Iexternals/tinyxml
-+    INCLUDE_FOR_TEST=-Ilib -Icli
+-    INCLUDE_FOR_TEST=-Ilib -Icli -Iexternals/simplecpp -Iexternals/tinyxml
++    INCLUDE_FOR_TEST=-Ilib -Icli -Iexternals/simplecpp
  endif
  
 -BIN=$(DESTDIR)$(PREFIX)/bin
@@ -63,41 +63,35 @@ diff -urNad cppcheck-1.74-orig/Makefile cppcheck-1.74/Makefile
  MAN_SOURCE=man/cppcheck.1.xml
  
  
-@@ -241,7 +245,8 @@
- endif
+@@ -175,8 +179,7 @@
+               $(SRCDIR)/tokenlist.o \
+               $(SRCDIR)/valueflow.o
  
+-EXTOBJ =      externals/simplecpp/simplecpp.o \
+-              externals/tinyxml/tinyxml2.o
++EXTOBJ =      externals/simplecpp/simplecpp.o
  
--EXTOBJ += $(TINYXML)
-+EXTOBJ +=
+ CLIOBJ =      cli/cmdlineparser.o \
+               cli/cppcheckexecutor.o \
+@@ -243,6 +246,8 @@
+               test/testvalueflow.o \
+               test/testvarid.o
+ 
 +LIBS += -ltinyxml2
- .PHONY: run-dmake
++
+ .PHONY: run-dmake tags
  
  
-@@ -250,7 +255,7 @@
+@@ -251,7 +256,7 @@
  cppcheck: $(LIBOBJ) $(CLIOBJ) $(EXTOBJ)
- 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o cppcheck $(CLIOBJ) $(LIBOBJ) $(EXTOBJ) $(LIBS) $(LDFLAGS) $(RDYNAMIC)
+ 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ $(CLIOBJ) $(LIBOBJ) $(EXTOBJ) $(LIBS) $(LDFLAGS) $(RDYNAMIC)
  
 -all:	cppcheck testrunner
 +all:	cppcheck testrunner man
  
- testrunner: $(TESTOBJ) $(LIBOBJ) $(EXTOBJ) cli/threadexecutor.o cli/cmdlineparser.o cli/cppcheckexecutor.o cli/filelister.o cli/pathmatch.o
- 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o testrunner $(TESTOBJ) $(LIBOBJ) cli/threadexecutor.o cli/cppcheckexecutor.o cli/cmdlineparser.o cli/filelister.o cli/pathmatch.o $(EXTOBJ) $(LIBS) $(LDFLAGS) $(RDYNAMIC)
-@@ -270,11 +275,11 @@
- run-dmake: dmake
- 	./dmake
- 
--reduce:	tools/reduce.o externals/tinyxml/tinyxml2.o $(LIBOBJ)
--	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -g -o reduce tools/reduce.o -Ilib -Iexternals/tinyxml $(LIBOBJ) $(LIBS) externals/tinyxml/tinyxml2.o $(LDFLAGS) $(RDYNAMIC)
-+reduce:	tools/reduce.o $(LIBOBJ)
-+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -g -o reduce tools/reduce.o -Ilib $(LIBOBJ) $(LIBS) $(LDFLAGS) $(RDYNAMIC)
- 
- clean:
--	rm -f build/*.o lib/*.o cli/*.o test/*.o tools/*.o externals/tinyxml/*.o testrunner reduce dmake cppcheck cppcheck.1
-+	rm -f build/*.o lib/*.o cli/*.o test/*.o tools/*.o testrunner reduce dmake cppcheck cppcheck.1
- 
- man:	man/cppcheck.1
- 
-@@ -285,16 +290,19 @@
+ testrunner: $(TESTOBJ) $(LIBOBJ) $(EXTOBJ) cli/threadexecutor.o cli/cmdlineparser.o cli/cppcheckexecutor.o cli/filelister.o
+ 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ $(TESTOBJ) $(LIBOBJ) cli/threadexecutor.o cli/cppcheckexecutor.o cli/cmdlineparser.o cli/filelister.o $(EXTOBJ) $(LIBS) $(LDFLAGS) $(RDYNAMIC)
+@@ -286,16 +291,19 @@
  tags:
  	ctags -R --exclude=doxyoutput --exclude=test/cfg cli externals gui lib test
  
@@ -121,5 +115,5 @@ diff -urNad cppcheck-1.74-orig/Makefile cppcheck-1.74/Makefile
 +	install -d ${DESTDIR}${MAN}/man1
 +	install man/cppcheck.1 ${DESTDIR}${MAN}/man1/cppcheck.1
  
- 
- ###### Build
+ # Validation of library files:
+ ConfigFiles := $(wildcard cfg/*.cfg)
