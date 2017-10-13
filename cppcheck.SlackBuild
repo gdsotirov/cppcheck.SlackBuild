@@ -19,13 +19,13 @@
 #
 # Visit SlackPack at http://sotirov-bg.net/slackpack/
 #
-# $Id: cppcheck.SlackBuild,v 1.5 2017/10/12 18:37:03 gsotirov Exp $
+# $Id: cppcheck.SlackBuild,v 1.6 2017/10/13 10:35:12 gsotirov Exp $
 #
 
 . ../../slack-package.conf
 
 NAME=cppcheck
-VERSION=1.62
+VERSION=1.74
 ARCH=${ARCH:-i486}
 BUILD=${BUILD:-1}
 
@@ -63,6 +63,7 @@ fi
 CFLAGS=$SLKCFLAGS \
 CXXFLAGS=$SLKCFLAGS \
 HAVE_RULES=yes \
+CFGDIR=/usr/share/cppcheck/cfg \
 make -j4 || exit 5
 # Build cppcheck-gui
 cd gui
@@ -73,16 +74,15 @@ CXXFLAGS=$SLKCFLAGS \
 make -j4 || exit 51
 cd ..
 # Install
-make DESTDIR=$PKG install || exit 6
+make DESTDIR=$PKG CFGDIR=/usr/share/cppcheck/cfg install || exit 6
 install -m 755 $SRC/gui/$NAME-gui $PKG/usr/bin/$NAME-gui || exit 61
-install -m 755 $SRC/htmlreport/$NAME-htmlreport $PKG/usr/bin/$NAME-htmlreport
 
 # Prepare
 bin_perms $PKG
 ( cd $PKG; strip_bin )
 ( cd $SRC; create_docs $PKG $NAME-$VERSION )
 install -m 644 $SRC/readme.txt $PKG/usr/doc/$NAME-$VERSION/README
-install -m 644 $SRC/readme_gui.txt $PKG/usr/doc/$NAME-$VERSION/README-GUI
+install -m 644 $SRC/gui/readme.txt $PKG/usr/doc/$NAME-$VERSION/README-GUI
 gzip_man $PKG
 
 mkdir -p $PKG/install
