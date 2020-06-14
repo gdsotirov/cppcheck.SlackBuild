@@ -82,23 +82,23 @@ make DESTDIR=$PKG FILESDIR="${CPPCHECK_FILESDIR}" install || exit 6
 bin_perms $PKG
 ( cd $PKG; strip_bin )
 ( cd $SRC; create_docs $PKG ${NAME}-${VERSION} )
-install -m 644 $SRC/readme.txt $PKG/usr/doc/${NAME}-${VERSION}/README
-install -m 644 $SRC/gui/readme.txt $PKG/usr/doc/${NAME}-${VERSION}/README-GUI
+install -m 644 -p $SRC/readme.txt $PKG/usr/doc/${NAME}-${VERSION}/README
+#install -m 644 -p $SRC/gui/readme.txt $PKG/usr/doc/${NAME}-${VERSION}/README-GUI
 gzip_man $PKG
 
 mkdir -p $PKG/install
-install -m 644 $CWD/slack-desc     $PKG/install/slack-desc
-install -m 644 $CWD/slack-required $PKG/install/slack-required
-install -m 644 $CWD/slack-suggests $PKG/install/slack-suggests
+install -m 644 -p $CWD/slack-desc     $PKG/install/slack-desc
+install -m 644 -p $CWD/slack-required $PKG/install/slack-required
+#install -m 644 -p $CWD/slack-suggests $PKG/install/slack-suggests
 
 SBDIR=$PKG/usr/src/slackbuilds/${NAME}-${VERSION}
 mkdir -p $SBDIR
-install -m 644 $CWD/slack-desc         $SBDIR/slack-desc
-install -m 644 $CWD/slack-required     $SBDIR/slack-required
-install -m 644 $CWD/slack-suggests     $SBDIR/slack-suggests
-install -m 644 $CWD/${NAME}.SlackBuild $SBDIR/${NAME}.SlackBuild
+install -m 644 -p $CWD/slack-desc         $SBDIR/slack-desc
+install -m 644 -p $CWD/slack-required     $SBDIR/slack-required
+#install -m 644 -p $CWD/slack-suggests     $SBDIR/slack-suggests
+install -m 644 -p $CWD/${NAME}.SlackBuild $SBDIR/${NAME}.SlackBuild
 if [ -e $CWD/${NAME}-${VERSION}.diff ]; then
-  install -m 644 $CWD/${NAME}-${VERSION}.diff $SBDIR/${NAME}-${VERSION}.diff
+  install -m 644 -p $CWD/${NAME}-${VERSION}.diff $SBDIR/${NAME}-${VERSION}.diff
 fi
 
 # Assemble
