@@ -8,4 +8,4 @@ cppcheck: only real errors in the code (i.e. have zero false positives).
 cppcheck:
 cppcheck: NOTE: The package does NOT include the QT GUI as it requires Qt5.
 cppcheck:
-cppcheck: Packaged by Georgi D. Sotirov <gdsotirov@dir.bg>
+cppcheck: Packaged by Georgi D. Sotirov <gdsotirov@gmail.com>

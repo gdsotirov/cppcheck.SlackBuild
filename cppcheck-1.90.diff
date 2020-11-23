@@ -1,7 +1,7 @@
 # This patch applies the following fixes:
 #  * allow CXXFLAGS addjustment
 #  * generate and install man page
-# Copyright (C) 2017-2020 Georgi D. Sotirov <gdsotirov@dir.bg>
+# Copyright (C) 2017-2020 Georgi D. Sotirov <gdsotirov@gmail.com>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
