@@ -5,7 +5,7 @@ cppcheck: compilers and many other analysis tools it does not detect syntax
 cppcheck: errors in the code. Cppcheck primarily detects the types of bugs
 cppcheck: that the compilers normally do not detect. The goal is to detect
 cppcheck: only real errors in the code (i.e. have zero false positives).
+cppcheck: The package includes also the QT GUI.
 cppcheck:
-cppcheck: NOTE: The package does NOT include the QT GUI as it requires Qt5.
 cppcheck:
 cppcheck: Packaged by Georgi D. Sotirov <gdsotirov@gmail.com>
