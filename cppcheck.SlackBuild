@@ -23,7 +23,7 @@
 . ../../slack-package.conf
 
 NAME=cppcheck
-VERSION=1.90
+VERSION=2.7
 ARCH=${ARCH:-i586}
 BUILD=${BUILD:-1}
 CPPCHECK_FILESDIR=/usr/share/${NAME}
@@ -59,23 +59,27 @@ if [ -e $CWD/${NAME}-${VERSION}.diff ]; then
   patch --backup --strip=1 --suffix=.orig < $CWD/${NAME}-${VERSION}.diff || exit 4
 fi
 
-# Build cppcheck
-CFLAGS="$SLKCFLAGS" \
-CXXFLAGS="$SLKCFLAGS" \
-HAVE_RULES=yes \
-FILESDIR="${CPPCHECK_FILESDIR}" \
-make --jobs 8 || exit 5
-# Build cppcheck-gui (disabled as Qt5 is required)
-#cd gui
-#qmake HAVE_RULES=yes
-#sed -i -e 's/^CFLAGS *=/CFLAGS +=/;s/^CXXFLAGS *=/CXXFLAGS +=/' Makefile
-#CFLAGS=$SLKCFLAGS \
-#CXXFLAGS=$SLKCFLAGS \
-#make --jobs 8 || exit 51
-#cd ..
-# Install
-make DESTDIR=$PKG FILESDIR="${CPPCHECK_FILESDIR}" install || exit 6
-#install --mode 755 --preserve-timestamps $SRC/gui/${NAME}-gui $PKG/usr/bin/${NAME}-gui || exit 61
+# Configure
+mkdir build; cd build
+cmake .. -LAH \
+        -DBUILD_GUI=ON \
+        -DBUILD_TESTS=ON \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_CXX_FLAGS="${SLKCFLAGS}" \
+        -DCMAKE_C_FLAGS="${SLKCFLAGS}" \
+        -DCMAKE_INSTALL_PREFIX=/usr \
+        -DCMAKE_VERBOSE_MAKEFILE=ON \
+        -DENABLE_OSS_FUZZ=ON \
+        -DFILESDIR=${CPPCHECK_FILESDIR} \
+        -DHAVE_RULES=yes \
+        -DUSE_BUNDLED_TINYXML2=OFF \
+        -DUSE_Z3=OFF \
+        -DWITH_QCHART=ON || exit 5
+
+# Build & install
+make --jobs 8 || exit 6
+DESTDIR=$PKG make install || exit 7
+cd ..
 
 # Prepare
 bin_perms $PKG
@@ -83,26 +87,26 @@ bin_perms $PKG
 ( cd $SRC; create_docs $PKG ${NAME}-${VERSION} )
 install --mode 644 --preserve-timestamps \
         $SRC/readme.txt $PKG/usr/doc/${NAME}-${VERSION}/README
-#install --mode 644 --preserve-timestamps \
-#        $SRC/gui/readme.txt $PKG/usr/doc/${NAME}-${VERSION}/README-GUI
+install --mode 644 --preserve-timestamps \
+        $SRC/gui/readme.txt $PKG/usr/doc/${NAME}-${VERSION}/README-GUI
 gzip_man $PKG
 
-mkdir --parents $PKG/install
+install --mode 755 --directory $PKG/install
 install --mode 644 --preserve-timestamps \
         $CWD/slack-desc     $PKG/install/slack-desc
 install --mode 644 --preserve-timestamps \
         $CWD/slack-required $PKG/install/slack-required
-#install --mode 644 --preserve-timestamps \
-#        $CWD/slack-suggests $PKG/install/slack-suggests
+install --mode 644 --preserve-timestamps \
+        $CWD/slack-suggests $PKG/install/slack-suggests
 
 SBDIR=$PKG/usr/src/slackbuilds/${NAME}-${VERSION}
-mkdir --parents $SBDIR
+install --mode 755 --directory $SBDIR
 install --mode 644 --preserve-timestamps \
         $CWD/slack-desc              $SBDIR/slack-desc
 install --mode 644 --preserve-timestamps \
         $CWD/slack-required          $SBDIR/slack-required
-#install --mode 644 --preserve-timestamps \
-#        $CWD/slack-suggests          $SBDIR/slack-suggests
+install --mode 644 --preserve-timestamps \
+        $CWD/slack-suggests          $SBDIR/slack-suggests
 if [ -e $CWD/${NAME}-${VERSION}.diff ]; then
 install --mode 644 --preserve-timestamps \
         $CWD/${NAME}-${VERSION}.diff $SBDIR/${NAME}-${VERSION}.diff
