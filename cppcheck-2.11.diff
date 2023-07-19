@@ -1,0 +1,48 @@
+# Avoid fail, because patch version is not defined
+diff -urNad cppcheck-2.11-orig/cmake/versions.cmake cppcheck-2.11/cmake/versions.cmake
+--- cppcheck-2.11-orig/cmake/versions.cmake	2023-06-22 12:07:56.000000000 +0300
++++ cppcheck-2.11/cmake/versions.cmake	2023-07-19 20:09:11.432339686 +0300
+@@ -1,5 +1,5 @@
+ # Version for libraries CPP
+-SET(VERSION "2.11")
++SET(VERSION "2.11.0")
+ STRING(REGEX MATCHALL "[0-9]+" VERSION_PARTS "${VERSION}")
+ LIST(GET VERSION_PARTS 0 VERSION_MAJOR)
+ LIST(GET VERSION_PARTS 1 VERSION_MINOR)
+# See https://github.com/danmar/cppcheck/commit/f4030c4b1ae8ac3001bfc9f85e24a51ad2f08d79
+diff -urNad cppcheck-2.11-orig/gui/CMakeLists.txt cppcheck-2.11/gui/CMakeLists.txt
+--- cppcheck-2.11-orig/gui/CMakeLists.txt	2023-06-22 12:07:56.000000000 +0300
++++ cppcheck-2.11/gui/CMakeLists.txt	2023-07-19 20:09:43.793336641 +0300
+@@ -9,10 +9,10 @@
+   - { key: HeaderFileExtensions,          value: 'x' }
+ ")
+ 
+-    add_compile_definitions($<$<NOT:$<CONFIG:Debug>>:-DQT_NO_DEBUG>)
+-    add_compile_definitions($<$<NOT:$<CONFIG:Debug>>:-DQT_NO_DEBUG_OUTPUT>)
+-    add_compile_definitions($<$<NOT:$<CONFIG:Debug>>:-DQT_NO_WARNING_OUTPUT>)
+-    add_compile_definitions($<$<CONFIG:Debug>:-DQT_DEBUG>)
++    add_compile_definitions($<$<NOT:$<CONFIG:Debug>>:QT_NO_DEBUG>)
++    add_compile_definitions($<$<NOT:$<CONFIG:Debug>>:QT_NO_DEBUG_OUTPUT>)
++    add_compile_definitions($<$<NOT:$<CONFIG:Debug>>:QT_NO_WARNING_OUTPUT>)
++    add_compile_definitions($<$<CONFIG:Debug>:QT_DEBUG>)
+ 
+     file(GLOB hdrs "*.h")
+     file(GLOB srcs "*.cpp")
+diff -urNad cppcheck-2.11-orig/tools/triage/CMakeLists.txt cppcheck-2.11/tools/triage/CMakeLists.txt
+--- cppcheck-2.11-orig/tools/triage/CMakeLists.txt	2023-06-22 12:07:56.000000000 +0300
++++ cppcheck-2.11/tools/triage/CMakeLists.txt	2023-07-19 20:10:02.201334908 +0300
+@@ -8,10 +8,10 @@
+   - { key: HeaderFileExtensions,          value: 'x' }
+ ")
+ 
+-    add_compile_definitions($<$<NOT:$<CONFIG:Debug>>:-DQT_NO_DEBUG>)
+-    add_compile_definitions($<$<NOT:$<CONFIG:Debug>>:-DQT_NO_DEBUG_OUTPUT>)
+-    add_compile_definitions($<$<NOT:$<CONFIG:Debug>>:-DQT_NO_WARNING_OUTPUT>)
+-    add_compile_definitions($<$<CONFIG:Debug>:-DQT_DEBUG>)
++    add_compile_definitions($<$<NOT:$<CONFIG:Debug>>:QT_NO_DEBUG>)
++    add_compile_definitions($<$<NOT:$<CONFIG:Debug>>:QT_NO_DEBUG_OUTPUT>)
++    add_compile_definitions($<$<NOT:$<CONFIG:Debug>>:QT_NO_WARNING_OUTPUT>)
++    add_compile_definitions($<$<CONFIG:Debug>:QT_DEBUG>)
+ 
+     file(GLOB hdrs "*.h")
+     file(GLOB srcs "*.cpp")
