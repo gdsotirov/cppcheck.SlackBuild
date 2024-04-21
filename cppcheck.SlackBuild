@@ -23,7 +23,7 @@
 . ../../slack-package.conf
 
 NAME=cppcheck
-VERSION=2.13.0
+VERSION=2.14.0
 ARCH=${ARCH:-i586}
 BUILD=${BUILD:-1}
 CPPCHECK_FILESDIR=/usr/share/${NAME}
